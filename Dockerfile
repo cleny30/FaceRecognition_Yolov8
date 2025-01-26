@@ -1,5 +1,5 @@
-# Sử dụng image Python 3.9
-FROM python:3.9-slim
+# Sử dụng image Python 3.12
+FROM python:3.12-slim
 # Thiết lập thư mục làm việc
 WORKDIR /app
 # Copy các file cần thiết vào container
