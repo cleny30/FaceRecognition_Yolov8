@@ -19,14 +19,14 @@ def encode_faces(dataset_path: str, encodings_path: str):
             known_names = data["names"]
 
     # Load YOLOv8 model
-    model = YOLO("face_yolov8n.pt")  # Load a pretrained YOLOv8 face detection model
+    model = YOLO("face_yolov8m.pt")  # Load a pretrained YOLOv8 face detection model
 
     for (i, image_path) in enumerate(image_paths):
         print(f"[INFO] Processing image {i + 1}/{len(image_paths)}: {image_path}")
         name = image_path.split(os.path.sep)[-2]
 
         image = cv2.imread(image_path)
-        results = model(image)  # Detect faces using YOLOv8
+        results = model(image, conf=0.5)  # Detect faces using YOLOv8
 
         for result in results:
             boxes = result.boxes.xyxy  # Get bounding boxes

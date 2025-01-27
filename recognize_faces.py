@@ -46,7 +46,7 @@ def recognize_faces_in_image(encodings_path: str, image_path: str):
             max_similarity = max(similarities)
             max_index = np.argmax(similarities)
 
-            if max_similarity > 0.6:  # Adjust threshold as needed
+            if max_similarity > 0.8:  # Adjust threshold as needed
                 name = data["names"][max_index]
                 accuracy = float(max_similarity * 100)  # Use similarity directly as accuracy
             else:
