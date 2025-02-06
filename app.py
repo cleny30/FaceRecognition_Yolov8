@@ -8,6 +8,9 @@ import tempfile
 import encode_faces
 import recognize_faces
 import shutil
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
 app = FastAPI()
 
 # Directory to save uploaded files temporarily
@@ -37,6 +40,15 @@ def clear_directory(directory):
         except Exception as e:
             print(f'Failed to delete {file_path}. Reason: {e}')
 
+async def train_dataset():
+    print("[INFO] Starting training on the extracted dataset...")
+    loop = asyncio.get_event_loop()
+    with ThreadPoolExecutor() as pool:
+        # Chạy encode_faces.encode_faces trong executor
+        message = await loop.run_in_executor(pool, encode_faces.encode_faces, DATASET_PATH, encode_file)
+        # Chạy clear_directory trong executor
+        await loop.run_in_executor(pool, clear_directory, DATASET_PATH)
+    print("[INFO] Training completed:", message)
 
 @app.post("/upload")
 async def upload_zip(file: UploadFile = File(...)):
@@ -57,13 +69,9 @@ async def upload_zip(file: UploadFile = File(...)):
             with zipfile.ZipFile(temp_zip_path, 'r') as zip_ref:
                 zip_ref.extractall(DATASET_PATH)
 
-        # Run training dataset
-        print("[INFO] Starting training on the extracted dataset...")
-        message = encode_faces.encode_faces(
-            DATASET_PATH, encode_file)
-        # Clear files in OUTPUT_PATH
-        clear_directory(DATASET_PATH)
-        return JSONResponse(message)
+        # Run training dataset in the background
+        asyncio.create_task(train_dataset())
+        return JSONResponse(content={"status": "success", "message": "File uploaded and processing started."}, status_code=200)
 
     except zipfile.BadZipFile:
         return JSONResponse(content={"status": "error", "message": "Invalid ZIP file."}, status_code=400)

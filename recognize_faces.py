@@ -56,7 +56,7 @@ def recognize_faces_in_image(encodings_path: str, image_path: str):
             # Thêm kết quả vào danh sách
             recognized_faces.append({
                 "detected": name,
-                "accuracy": round(float(accuracy) / 100, 2)  # Đảm bảo accuracy là kiểu float
+                "accuracy": round(float(accuracy), 2)  # Đảm bảo accuracy là kiểu float
             })
 
     return recognized_faces
