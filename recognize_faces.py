@@ -14,7 +14,7 @@ def recognize_faces_in_image(encodings_path: str, image_path: str):
         return {"status": "error", "message": "Failed to load image."}
 
     # Load YOLOv8 face detection model
-    model = YOLO("face_yolov8n.pt")
+    model = YOLO("face_yolov8m.pt")
     results = model(image)  # Detect faces using YOLOv8
 
     recognized_faces = []
@@ -46,7 +46,7 @@ def recognize_faces_in_image(encodings_path: str, image_path: str):
             max_similarity = max(similarities)
             max_index = np.argmax(similarities)
 
-            if max_similarity > 0.8:  # Adjust threshold as needed
+            if max_similarity > 0.65:  # Adjust threshold as needed
                 name = data["names"][max_index]
                 accuracy = float(max_similarity * 100)  # Use similarity directly as accuracy
             else:
@@ -58,5 +58,5 @@ def recognize_faces_in_image(encodings_path: str, image_path: str):
                 "detected": name,
                 "accuracy": round(float(accuracy) / 100, 2)  # Đảm bảo accuracy là kiểu float
             })
-
+            print(recognized_faces)
     return recognized_faces
